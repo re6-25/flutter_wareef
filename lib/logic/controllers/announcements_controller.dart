@@ -11,25 +11,28 @@ class AnnouncementsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _seedIfEmpty();
-    fetchAnnouncements();
+    _seedIfEmpty().then((_) => fetchAnnouncements());
   }
 
   Future<void> _seedIfEmpty() async {
     final db = await _dbHelper.database;
     final count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM announcements')) ?? 0;
+    
+    // Check if the promo announcement already exists
+    final promoCheck = await db.query('announcements', where: 'title LIKE ?', whereArgs: ['%عروض نهاية العام%']);
+
+    if (promoCheck.isEmpty) {
+      await addAnnouncement(
+        '🎁 عروض وريف لنهاية العام 🎁',
+        'لفترة محدودة جداً! استثمري في نفسك مع عروضنا الحصرية على كافة الدورات. لا تضيعي الفرصة وكوني من المبدعات!',
+        imagePath: 'assets/images/year_end_promo.png',
+      );
+    }
+
     if (count == 0) {
       await addAnnouncement(
         'مرحباً بكم في أكاديمية وريف 🎊',
         'يسرنا الإعلان عن افتتاح قسم المشاريع التقنية الجديد لدعم الوريفات المبدعات.',
-      );
-      await addAnnouncement(
-        'بادروا بالتسجيل في دورة "فن الخط العربي" 🖋️',
-        'دورة تدريبية مكثفة تقدمها نخبة من المدربين المتميزين، لا تفوتوا الفرصة!',
-      );
-      await addAnnouncement(
-        'تحديث جديد للتطبيق (نسخة 1.2) 🚀',
-        'أصبح بإمكانكم الآن تصنيف مشاريعكم وتصدير تقاريركم بصيغة PDF.',
       );
     }
   }
@@ -54,7 +57,6 @@ class AnnouncementsController extends GetxController {
     );
     final db = await _dbHelper.database;
     await db.insert('announcements', announcement.toMap());
-    fetchAnnouncements();
   }
 
   Future<void> deleteAnnouncement(int id) async {

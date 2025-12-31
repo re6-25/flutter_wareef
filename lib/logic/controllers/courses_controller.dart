@@ -31,12 +31,10 @@ class CoursesController extends GetxController {
   void _applyFilters({String query = ''}) {
     Iterable<CourseModel> results = courses;
     
-    // Category Filter
     if (selectedCategory.value != 'All') {
       results = results.where((c) => c.category == selectedCategory.value);
     }
     
-    // Search Query Filter
     if (query.isNotEmpty) {
       results = results.where((c) => 
         c.title.toLowerCase().contains(query.toLowerCase()) || 
@@ -62,51 +60,79 @@ class CoursesController extends GetxController {
   }
 
   Future<void> _seedNewCourses() async {
-    // Check if the new courses are already added
-    if (courses.any((c) => c.title.contains('رسم الأطفال'))) return;
+    if (courses.any((c) => c.title.contains('الكاميو'))) return;
 
-    // Add Art Course
+    final String waLink = 'https://api.whatsapp.com/send?phone=967775117639';
+
+    // 1. Drawing Kids
     await addCourse(
       'دورة رسم الأطفال ✨',
-      'بتساعدهم وتشغل وقتهم وتطورهم وبسعر حلو ولأخر مرة تنفتح فيه الدورة 🥺 سجليه معنا الآن بسعر 2800 بس للتسجيل والاستفسار 👇 775117639',
+      'تنمي موهبة طفلك بسعر 2800 ريال. سجليه الآن الرابط 👇 \n$waLink',
       category: 'Arts',
       imagePath: 'assets/images/drawing_kids.png'
     );
-    // Add Wedding Invitations
+    // 2. Wedding Invitations
     await addCourse(
       'تصميم دعوات الزفاف الورقية 💍',
-      'من جوالك وباحترافية مطلقة مع المبدعة إيناس العريقي. عرض خاص ومحدود جداً! استثمري في نفسك بـ 2800 ريال يمني بس بدلاً من 35 ريال!',
+      'أسرار التصميم باحترافية من جوالك. السعر 2800 ريال. للتسجيل 👇 \n$waLink',
       category: 'Design',
       imagePath: 'assets/images/wedding_invitations.jpg'
     );
-    // Add Content Writing
+    // 3. Content Writing
     await addCourse(
       'دورة كتابة المحتوى ✍️',
-      'تكتبي بثقة بدون تردد، تعرفي كيف تقنعي وتبيعي بالكلام، تحولي كتابتك لمصدر دخل. السعر: 2800 ريال لفترة محدودة.',
+      'تكتبي بثقة وتحولي موهبتك لمصدر دخل. السعر: 2800 ريال. الرابط 👇 \n$waLink',
       category: 'Tech',
       imagePath: 'assets/images/content_writing.png'
     );
-    // Add Polymer Clay
+    // 4. Polymer Clay
     await addCourse(
       'دورة الصلصال الحراري 🏺',
-      'تحوّل موهبتك لقطع فنية تنباع، وتعطيك مهارة يدوية مميزة تقدري تبدأي بها مشروعك. بسعر 2800 بدل 30 ر.س',
+      'تحوّل موهبتك لقطع فنية مميزة. السعر 2800 ريال. للتسجيل 👇 \n$waLink',
       category: 'Crafts',
       imagePath: 'assets/images/polymer_clay.jpg'
     );
-    // Add Resin Art
+    // 5. Resin Art
     await addCourse(
       'دورة فن الريزن 💎',
-      'تفتح لك باب دخل إبداعي، تعلّمك شغل مطلوب، وتخليك تصنعي قطع فخمة تُباع وتُطلب. سعر الدورة: 2800 ريال بدل 35 ر.س',
+      'اصنعي قطع فخمة تُباع وتُطلب. السعر: 2800 ريال. سجل الآن 👇 \n$waLink',
       category: 'Crafts',
       imagePath: 'assets/images/resin_art.jpg'
     );
+    // 6. Cameo (New)
+    await addCourse(
+      'دورة الكاميو – القص الإلكتروني ✂️',
+      'تعلمي استخدام الجهاز وقص الملصقات باحتراف. بسعر 50 ر.ص بدل 100 🤩 الرابط 👇 \n$waLink',
+      category: 'Crafts',
+      imagePath: 'assets/images/cameo_course.png'
+    );
+    // 7. Photoshop (New)
+    await addCourse(
+      'دورة الفوتوشوب المكثفة 💻',
+      'تعديل الصور وتصميم البوستات الجذابة. بسعر 50 ر.ص بدل 70 ر.ص للتسجيل 👇 \n$waLink',
+      category: 'Tech',
+      imagePath: 'assets/images/photoshop_course.jpg'
+    );
+    // 8. Digital Invitations (New)
+    await addCourse(
+      'دورة الدعوات الإلكترونية ✨',
+      'تصميم دعوات أنيقة بلمسات بسيطة. السعر 50 ر.ص فقط. سجل الآن 👇 \n$waLink',
+      category: 'Design',
+      imagePath: 'assets/images/digital_invitations.png'
+    );
+    // 9. Knitting/Crochet (New)
+    await addCourse(
+      'دورة الحياكة (الكروشيه) 🧶',
+      'متعة وراحة وتحويل الخيوط لقطع فنية. عرض خاص بـ 20 ر.ص فقط. للتسجيل 👇 \n$waLink',
+      category: 'Crafts',
+      imagePath: 'assets/images/crochet_course.png'
+    );
+    
     fetchCourses();
   }
 
   Future<void> addCourse(String title, String description, {String? imagePath, String category = 'Other'}) async {
-    // If auth user is null, we use a default ID (for seeding)
     final userId = _authController.currentUser.value?.id ?? 1;
-
     final course = CourseModel(
       title: title,
       description: description,
@@ -115,7 +141,6 @@ class CoursesController extends GetxController {
       createdBy: userId,
       createdAt: DateTime.now(),
     );
-
     final db = await _dbHelper.database;
     await db.insert('courses', course.toMap());
   }
@@ -128,23 +153,13 @@ class CoursesController extends GetxController {
       'image_path': imagePath,
     };
     if (category != null) values['category'] = category;
-
-    await db.update(
-      'courses',
-      values,
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    await db.update('courses', values, where: 'id = ?', whereArgs: [id]);
     fetchCourses();
   }
 
   Future<void> deleteCourse(int id) async {
     final db = await _dbHelper.database;
-    await db.delete(
-      'courses',
-      where: 'id = ?',
-      whereArgs: [id],
-    );
+    await db.delete('courses', where: 'id = ?', whereArgs: [id]);
     fetchCourses();
   }
 }
