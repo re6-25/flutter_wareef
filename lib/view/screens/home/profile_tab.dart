@@ -58,6 +58,13 @@ class ProfileTab extends StatelessWidget {
               ),
             ],
               ],
+              const Divider(),
+              ListTile(
+                leading: const Icon(Icons.info_outline, color: AppColors.primary),
+                title: const Text('عن أكاديمية وريف'),
+                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                onTap: () => Get.toNamed('/about'),
+              ),
               const Divider(height: 48),
               ListTile(
                 title: Text('theme_mode'.tr),

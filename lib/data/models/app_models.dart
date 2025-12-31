@@ -48,6 +48,8 @@ class ProjectModel {
   final String description;
   final String status;
   final int ownerId;
+  final String? ownerPhone;
+  final String? galleryImages; // Comma separated paths
   final String? imagePath;
   final String category;
   final bool isDeleted;
@@ -60,6 +62,8 @@ class ProjectModel {
     required this.description,
     this.status = 'Pending',
     required this.ownerId,
+    this.ownerPhone,
+    this.galleryImages,
     this.imagePath,
     this.category = 'Other',
     this.isDeleted = false,
@@ -74,6 +78,8 @@ class ProjectModel {
       'description': description,
       'status': status,
       'owner_id': ownerId,
+      'owner_phone': ownerPhone,
+      'gallery_images': galleryImages,
       'image_path': imagePath,
       'category': category,
       'is_deleted': isDeleted ? 1 : 0,
@@ -87,8 +93,10 @@ class ProjectModel {
       id: map['id'],
       title: map['title'],
       description: map['description'],
-      status: map['status'] ?? 'Pending',
+      status: map['status'],
       ownerId: map['owner_id'],
+      ownerPhone: map['owner_phone'],
+      galleryImages: map['gallery_images'],
       imagePath: map['image_path'],
       category: map['category'] ?? 'Other',
       isDeleted: map['is_deleted'] == 1,

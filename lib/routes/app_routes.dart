@@ -11,6 +11,8 @@ import 'package:wareef_academy/view/screens/admin/roles_management_screen.dart';
 import 'package:wareef_academy/view/screens/admin/admin_dashboard_screen.dart';
 import 'package:wareef_academy/view/screens/onboarding/onboarding_screen.dart';
 import 'package:wareef_academy/view/screens/admin/manage_announcements_screen.dart';
+import 'package:wareef_academy/view/screens/home/about_screen.dart';
+import 'package:wareef_academy/view/screens/home/offers_screen.dart';
 
 class AppRoutes {
   static const initial = '/onboarding';
@@ -22,6 +24,8 @@ class AppRoutes {
   static const courseDetails = '/course-details';
   static const courseForm = '/course-form';
   static const manageAnnouncements = '/manage-announcements';
+  static const about = '/about';
+  static const offers = '/offers';
 
   static final routes = [
     GetPage(name: login, page: () => const LoginScreen()),
@@ -35,5 +39,7 @@ class AppRoutes {
     GetPage(name: '/roles-management', page: () => const RolesManagementScreen()),
     GetPage(name: '/admin-dashboard', page: () => const AdminDashboardScreen()),
     GetPage(name: '/onboarding', page: () => const OnboardingScreen()),
+    GetPage(name: about, page: () => const AboutScreen()),
+    GetPage(name: offers, page: () => const OffersScreen()),
   ];
 }

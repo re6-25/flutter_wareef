@@ -54,7 +54,7 @@ class ProjectsController extends GetxController {
     }
   }
 
-  Future<void> addProject(String title, String description, {String? imagePath, String category = 'Other'}) async {
+  Future<void> addProject(String title, String description, {String? imagePath, String? ownerPhone, String? galleryImages, String category = 'Other'}) async {
     final user = _authController.currentUser.value;
     if (user == null) return;
 
@@ -62,6 +62,8 @@ class ProjectsController extends GetxController {
       title: title,
       description: description,
       ownerId: user.id!,
+      ownerPhone: ownerPhone,
+      galleryImages: galleryImages,
       imagePath: imagePath,
       category: category,
       createdAt: DateTime.now(),
@@ -73,12 +75,14 @@ class ProjectsController extends GetxController {
     fetchProjects();
   }
 
-  Future<void> updateProject(int id, String title, String description, {String? imagePath, String? category}) async {
+  Future<void> updateProject(int id, String title, String description, {String? imagePath, String? ownerPhone, String? galleryImages, String? category}) async {
     final db = await _dbHelper.database;
     final Map<String, dynamic> values = {
       'title': title,
       'description': description,
       'image_path': imagePath,
+      'owner_phone': ownerPhone,
+      'gallery_images': galleryImages,
       'updated_at': DateTime.now().toIso8601String(),
     };
     if (category != null) values['category'] = category;

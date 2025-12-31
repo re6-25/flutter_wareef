@@ -16,10 +16,12 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _controller = Get.find<ProjectsController>();
   final List<String> _categories = ['تقني', 'فني', 'تجاري', 'حرفي', 'تعليمي', 'أخرى'];
   String _selectedCategory = 'تقني';
   String? _imagePath;
+  List<String> _galleryImages = [];
   ProjectModel? _editingProject;
 
   @override
@@ -29,8 +31,12 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
     if (_editingProject != null) {
       _titleController.text = _editingProject!.title;
       _descriptionController.text = _editingProject!.description;
+      _phoneController.text = _editingProject!.ownerPhone ?? '';
       _imagePath = _editingProject!.imagePath;
       _selectedCategory = _editingProject!.category;
+      if (_editingProject!.galleryImages != null && _editingProject!.galleryImages!.isNotEmpty) {
+        _galleryImages = _editingProject!.galleryImages!.split(',');
+      }
     }
   }
 
@@ -39,6 +45,16 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
     final image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
       setState(() => _imagePath = image.path);
+    }
+  }
+
+  Future<void> _pickGalleryImages() async {
+    final picker = ImagePicker();
+    final images = await picker.pickMultiImage();
+    if (images.isNotEmpty) {
+      setState(() {
+        _galleryImages.addAll(images.map((e) => e.path));
+      });
     }
   }
 
@@ -73,8 +89,19 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
               ),
               const SizedBox(height: 16),
               TextFormField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                decoration: InputDecoration(
+                  labelText: 'رقم هاتف المصورة (واتساب)',
+                  prefixIcon: const Icon(Icons.phone_android),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+                validator: (v) => v!.isEmpty ? 'required'.tr : null,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
                 controller: _descriptionController,
-                maxLines: 5,
+                maxLines: 4,
                 decoration: InputDecoration(
                   labelText: 'description'.tr,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
@@ -82,12 +109,12 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
                 validator: (v) => v!.isEmpty ? 'required'.tr : null,
               ),
               const SizedBox(height: 20),
-              const Text('صورة المشروع (اختياري)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const Text('صورة الغلاف (اختياري)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               GestureDetector(
                 onTap: _pickImage,
                 child: Container(
-                  height: 180,
+                  height: 150,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: Colors.grey[200],
@@ -102,31 +129,102 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
                       : Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.add_a_photo, size: 50, color: Colors.grey),
+                            const Icon(Icons.add_a_photo, size: 40, color: Colors.grey),
                             Text('pick_image'.tr),
                           ],
                         ),
                 ),
               ),
+              const SizedBox(height: 20),
+              const Text('معرض أعمالك (صور سابقة)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 100,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _galleryImages.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == _galleryImages.length) {
+                      return GestureDetector(
+                        onTap: _pickGalleryImages,
+                        child: Container(
+                          width: 100,
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.grey[300],
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: const Icon(Icons.add_photo_alternate_outlined),
+                        ),
+                      );
+                    }
+                    return Stack(
+                      children: [
+                        Container(
+                          width: 100,
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: FileImage(File(_galleryImages[index])),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          right: 12,
+                          top: 4,
+                          child: GestureDetector(
+                            onTap: () => setState(() => _galleryImages.removeAt(index)),
+                            child: const CircleAvatar(
+                              radius: 12,
+                              backgroundColor: Colors.red,
+                              child: Icon(Icons.close, size: 14, color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
               const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
-                height: 50,
+                height: 55,
                 child: ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
+                      final galleryString = _galleryImages.join(',');
                       if (_editingProject == null) {
-                        await _controller.addProject(_titleController.text, _descriptionController.text, imagePath: _imagePath, category: _selectedCategory);
+                        await _controller.addProject(
+                          _titleController.text, 
+                          _descriptionController.text, 
+                          imagePath: _imagePath, 
+                          ownerPhone: _phoneController.text,
+                          galleryImages: galleryString,
+                          category: _selectedCategory
+                        );
                       } else {
-                        await _controller.updateProject(_editingProject!.id!, _titleController.text, _descriptionController.text, imagePath: _imagePath, category: _selectedCategory);
+                        await _controller.updateProject(
+                          _editingProject!.id!, 
+                          _titleController.text, 
+                          _descriptionController.text, 
+                          imagePath: _imagePath, 
+                          ownerPhone: _phoneController.text,
+                          galleryImages: galleryString,
+                          category: _selectedCategory
+                        );
                       }
                       Get.back();
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    backgroundColor: Theme.of(context).primaryColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                   ),
-                  child: Text('save'.tr, style: const TextStyle(fontSize: 18)),
+                  child: Text('save'.tr, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
               ),
             ],

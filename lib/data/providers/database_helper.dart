@@ -66,6 +66,10 @@ class DatabaseHelper {
     if (oldVersion < 4) {
       await db.execute('ALTER TABLE courses ADD COLUMN category TEXT DEFAULT "Other"');
     }
+    if (oldVersion < 5) {
+      await db.execute('ALTER TABLE projects ADD COLUMN owner_phone TEXT');
+      await db.execute('ALTER TABLE projects ADD COLUMN gallery_images TEXT');
+    }
   }
 
   Future _createDB(Database db, int version) async {
@@ -104,6 +108,8 @@ class DatabaseHelper {
         description $textType,
         status $textType DEFAULT 'Pending', -- Pending, Approved, Rejected
         owner_id $intType,
+        owner_phone TEXT,
+        gallery_images TEXT,
         image_path TEXT,
         category TEXT DEFAULT 'Other',
         is_deleted $boolType DEFAULT 0,
