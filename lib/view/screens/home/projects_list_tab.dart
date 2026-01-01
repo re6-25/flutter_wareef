@@ -17,6 +17,16 @@ class ProjectsListTab extends StatelessWidget {
     final List<String> categories = ['الكل', 'تقني', 'فني', 'تجاري', 'حرفي', 'تعليمي', 'أخرى'];
     final RxString selectedCategory = 'الكل'.obs;
 
+    final Map<String, String> categoryKeys = {
+      'الكل': 'cat_all',
+      'تقني': 'cat_tech',
+      'فني': 'cat_arts',
+      'تجاري': 'cat_commercial',
+      'حرفي': 'cat_crafts',
+      'تعليمي': 'cat_educational',
+      'أخرى': 'cat_other'
+    };
+
     // Integrated Filter logic
     void applyFilters() {
       if (selectedCategory.value == 'الكل') {
@@ -66,7 +76,7 @@ class ProjectsListTab extends StatelessWidget {
                 children: categories.map((cat) => Padding(
                   padding: const EdgeInsets.only(right: 8.0),
                   child: ChoiceChip(
-                    label: Text(cat),
+                    label: Text(categoryKeys[cat]?.tr ?? cat),
                     selected: selectedCategory.value == cat,
                     onSelected: (selected) {
                       if (selected) {

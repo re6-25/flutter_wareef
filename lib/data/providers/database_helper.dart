@@ -40,7 +40,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 4,
+      version: 7,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -67,8 +67,60 @@ class DatabaseHelper {
       await db.execute('ALTER TABLE courses ADD COLUMN category TEXT DEFAULT "Other"');
     }
     if (oldVersion < 5) {
-      await db.execute('ALTER TABLE projects ADD COLUMN owner_phone TEXT');
-      await db.execute('ALTER TABLE projects ADD COLUMN gallery_images TEXT');
+      // Use try-catch for ALTER TABLE to avoid errors if column already exists (sometimes happen during dev)
+      try { await db.execute('ALTER TABLE projects ADD COLUMN owner_phone TEXT'); } catch(e) {}
+      try { await db.execute('ALTER TABLE projects ADD COLUMN gallery_images TEXT'); } catch(e) {}
+    }
+    if (oldVersion < 6) {
+      try { await db.execute('ALTER TABLE users ADD COLUMN profile_image TEXT'); } catch(e) {}
+      try { await db.execute('ALTER TABLE courses ADD COLUMN price REAL DEFAULT 0.0'); } catch(e) {}
+      
+      await db.execute('''
+        CREATE TABLE offers (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          course_id INTEGER NOT NULL,
+          discount_percentage REAL NOT NULL,
+          image_path TEXT,
+          created_at TEXT,
+          FOREIGN KEY (course_id) REFERENCES courses (id)
+        )
+      ''');
+
+      await db.execute('''
+        CREATE TABLE categories (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          type TEXT NOT NULL -- project, course, both
+        )
+      ''');
+
+      // Seed default categories
+      final defaultCats = [
+        {'name': 'Arts', 'type': 'both'},
+        {'name': 'Design', 'type': 'both'},
+        {'name': 'Tech', 'type': 'both'},
+        {'name': 'Crafts', 'type': 'both'},
+        {'name': 'Educational', 'type': 'both'},
+        {'name': 'Commercial', 'type': 'both'},
+        {'name': 'Other', 'type': 'both'},
+      ];
+      for (var cat in defaultCats) {
+        await db.insert('categories', cat);
+      }
+    }
+    if (oldVersion < 7) {
+      // Drop and recreate offers table with new schema
+      await db.execute('DROP TABLE IF EXISTS offers');
+      await db.execute('''
+        CREATE TABLE offers (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          course_id INTEGER NOT NULL,
+          discount_percentage REAL NOT NULL,
+          image_path TEXT,
+          created_at TEXT,
+          FOREIGN KEY (course_id) REFERENCES courses (id)
+        )
+      ''');
     }
   }
 
@@ -95,6 +147,7 @@ class DatabaseHelper {
         salt $textType,
         role_id $intType,
         is_active $boolType DEFAULT 1,
+        profile_image TEXT,
         created_at $textType,
         FOREIGN KEY (role_id) REFERENCES roles (id)
       )
@@ -125,6 +178,7 @@ class DatabaseHelper {
         id $idType,
         title $textType,
         description $textType,
+        price REAL DEFAULT 0.0,
         created_by $intType,
         image_path TEXT,
         category TEXT DEFAULT 'Other',
@@ -144,6 +198,27 @@ class DatabaseHelper {
       )
     ''');
 
+    // Offers Table
+    await db.execute('''
+      CREATE TABLE offers (
+        id $idType,
+        course_id $intType,
+        discount_percentage REAL NOT NULL,
+        image_path TEXT,
+        created_at $textType,
+        FOREIGN KEY (course_id) REFERENCES courses (id)
+      )
+    ''');
+
+    // Categories Table
+    await db.execute('''
+      CREATE TABLE categories (
+        id $idType,
+        name $textType,
+        type $textType
+      )
+    ''');
+
     // Seed Initial Data (Roles & Admin)
     await db.insert('roles', {'name': 'Admin'});
     await db.insert('roles', {'name': 'Wareefa'});
@@ -151,6 +226,20 @@ class DatabaseHelper {
     
     // Default Admin (Password: admin123 - will hash in real logic, but for seed we use simple one or handle it in AuthController)
     // For simplicity of seeding, we'll let AuthController handle initial admin if not exists
+
+    // Seed default categories
+    final defaultCats = [
+      {'name': 'Arts', 'type': 'both'},
+      {'name': 'Design', 'type': 'both'},
+      {'name': 'Tech', 'type': 'both'},
+      {'name': 'Crafts', 'type': 'both'},
+      {'name': 'Educational', 'type': 'both'},
+      {'name': 'Commercial', 'type': 'both'},
+      {'name': 'Other', 'type': 'both'},
+    ];
+    for (var cat in defaultCats) {
+      await db.insert('categories', cat);
+    }
   }
 
   Future close() async {

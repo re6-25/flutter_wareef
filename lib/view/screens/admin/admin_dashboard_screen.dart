@@ -12,7 +12,7 @@ class AdminDashboardScreen extends StatelessWidget {
     final controller = Get.put(DashboardController());
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Admin Dashboard')),
+      appBar: AppBar(title: Text('admin_dashboard_title'.tr)),
       body: Obx(() {
         if (controller.isLoading.value) return const Center(child: CircularProgressIndicator());
         return SingleChildScrollView(
@@ -20,38 +20,36 @@ class AdminDashboardScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('الأداء العام', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              Text('general_performance'.tr, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               Row(
                 children: [
-                  Expanded(child: _buildStatCard('المستخدمين', controller.totalUsers.value.toString(), Icons.people, Colors.blue)),
+                  Expanded(child: _buildStatCard('users'.tr, controller.totalUsers.value.toString(), Icons.people, Colors.blue)),
                   const SizedBox(width: 15),
-                  Expanded(child: _buildStatCard('الدورات', controller.totalCourses.value.toString(), Icons.school, Colors.orange)),
+                  Expanded(child: _buildStatCard('courses_stat'.tr, controller.totalCourses.value.toString(), Icons.school, Colors.orange)),
                 ],
               ),
               const SizedBox(height: 15),
               Row(
                 children: [
-                  Expanded(child: _buildStatCard('مشاريع مقبولة', controller.approvedProjects.value.toString(), Icons.check_circle, Colors.green)),
+                  Expanded(child: _buildStatCard('approved_projects'.tr, controller.approvedProjects.value.toString(), Icons.check_circle, Colors.green)),
                   const SizedBox(width: 15),
-                  Expanded(child: _buildStatCard('مشاريع معلقة', controller.pendingProjects.value.toString(), Icons.pending, Colors.redAccent)),
+                  Expanded(child: _buildStatCard('pending_projects'.tr, controller.pendingProjects.value.toString(), Icons.pending, Colors.redAccent)),
                 ],
               ),
               const SizedBox(height: 40),
+              Text('projects_distribution'.tr, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 15),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  const Text('توزيع المشاريع حسب النوع', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  IconButton(
-                    onPressed: () => Get.toNamed('/manage-announcements'),
-                    icon: const Icon(Icons.campaign, color: Colors.blue),
-                    tooltip: 'إدارة الإعلانات',
-                  ),
+                  _buildActionTile(context, Icons.campaign, 'manage_announcements'.tr, '/manage-announcements'),
+                  _buildActionTile(context, Icons.category, 'manage_categories_title'.tr, '/manage-categories'),
                 ],
               ),
               const SizedBox(height: 20),
               if (controller.categoriesCount.isEmpty)
-                const Center(child: Text('لا توجد بيانات متاحة بعد'))
+                Center(child: Text('no_data_available'.tr))
               else
                 SizedBox(
                   height: 300,
@@ -113,6 +111,26 @@ class AdminDashboardScreen extends StatelessWidget {
           const SizedBox(height: 15),
           Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: color)),
           Text(title, style: const TextStyle(fontSize: 16, color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildActionTile(BuildContext context, IconData icon, String label, String route) {
+    return InkWell(
+      onTap: () => Get.toNamed(route),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: AppColors.primary, size: 28),
+          ),
+          const SizedBox(height: 8),
+          Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
         ],
       ),
     );

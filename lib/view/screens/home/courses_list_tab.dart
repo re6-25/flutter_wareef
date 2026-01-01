@@ -44,22 +44,33 @@ class CoursesListTab extends StatelessWidget {
             // Category Chips
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: Obx(() => Row(
-                children: ['All', 'Arts', 'Design', 'Tech', 'Crafts', 'Other'].map((cat) {
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: FilterChip(
-                      label: Text(cat == 'All' ? 'الكل' : cat),
-                      selected: controller.selectedCategory.value == cat,
-                      onSelected: (selected) {
-                        controller.filterByCategory(cat);
-                      },
-                      selectedColor: Theme.of(context).primaryColor.withOpacity(0.2),
-                      checkmarkColor: Theme.of(context).primaryColor,
-                    ),
-                  );
-                }).toList(),
-              )),
+              child: Obx(() {
+                 final categories = ['All', 'Arts', 'Design', 'Tech', 'Crafts', 'Other'];
+                 final categoryKeys = {
+                    'All': 'cat_all',
+                    'Arts': 'cat_arts',
+                    'Design': 'cat_design',
+                    'Tech': 'cat_tech',
+                    'Crafts': 'cat_crafts',
+                    'Other': 'cat_other'
+                 };
+                 return Row(
+                  children: categories.map((cat) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: FilterChip(
+                        label: Text(categoryKeys[cat]?.tr ?? cat),
+                        selected: controller.selectedCategory.value == cat,
+                        onSelected: (selected) {
+                          controller.filterByCategory(cat);
+                        },
+                        selectedColor: Theme.of(context).primaryColor.withOpacity(0.2),
+                        checkmarkColor: Theme.of(context).primaryColor,
+                      ),
+                    );
+                  }).toList(),
+                );
+              }),
             ),
             const SizedBox(height: 16),
             Expanded(

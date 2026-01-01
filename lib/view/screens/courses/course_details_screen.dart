@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 class CourseDetailsScreen extends StatelessWidget {
   const CourseDetailsScreen({super.key});
 
-  final String supervisorNumber = '+966500000000'; // Placeholder
+  final String supervisorNumber = '967775117639';
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +48,24 @@ class CourseDetailsScreen extends StatelessWidget {
               ),
               const SizedBox(height: 24),
             ],
-            const Text('Course Description', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text('course_description'.tr, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Text(course.description, style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 48),
+            const SizedBox(height: 16),
+            if (course.price > 0) ...[
+              Row(
+                children: [
+                  const Icon(Icons.monetization_on, color: AppColors.primary, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${'price'.tr}: ${course.price} SAR',
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
+            const SizedBox(height: 32),
             if (!authController.isGuest)
               SizedBox(
                 width: double.infinity,
@@ -74,8 +88,8 @@ class CourseDetailsScreen extends StatelessWidget {
   }
 
   void _registerViaWhatsApp(String courseTitle) async {
-    final message = 'Hello, I want to register for the course: $courseTitle';
-    final url = 'https://wa.me/$supervisorNumber?text=${Uri.encodeComponent(message)}';
+    final message = '${'whatsapp_register_msg'.tr} $courseTitle';
+    final url = 'https://api.whatsapp.com/send?phone=$supervisorNumber&text=${Uri.encodeComponent(message)}';
     
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
@@ -86,14 +100,14 @@ class CourseDetailsScreen extends StatelessWidget {
 
   void _confirmDelete(int id) {
     Get.defaultDialog(
-      title: 'Delete Course',
-      middleText: 'Are you sure you want to delete this course?',
+      title: 'delete_course_title'.tr,
+      middleText: 'delete_course_confirmation'.tr,
       onConfirm: () {
         Get.find<CoursesController>().deleteCourse(id);
         Get.back(); // close dialog
         Get.back(); // close screen
       },
-      textConfirm: 'Delete',
+      textConfirm: 'delete_confirm'.tr,
       confirmTextColor: Colors.white,
       buttonColor: AppColors.error,
     );

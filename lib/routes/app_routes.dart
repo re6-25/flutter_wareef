@@ -13,6 +13,7 @@ import 'package:wareef_academy/view/screens/onboarding/onboarding_screen.dart';
 import 'package:wareef_academy/view/screens/admin/manage_announcements_screen.dart';
 import 'package:wareef_academy/view/screens/home/about_screen.dart';
 import 'package:wareef_academy/view/screens/home/offers_screen.dart';
+import 'package:wareef_academy/view/screens/admin/manage_categories_screen.dart';
 
 class AppRoutes {
   static const initial = '/onboarding';
@@ -41,5 +42,6 @@ class AppRoutes {
     GetPage(name: '/onboarding', page: () => const OnboardingScreen()),
     GetPage(name: about, page: () => const AboutScreen()),
     GetPage(name: offers, page: () => const OffersScreen()),
+    GetPage(name: '/manage-categories', page: () => const ManageCategoriesScreen()),
   ];
 }

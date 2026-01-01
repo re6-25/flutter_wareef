@@ -50,7 +50,7 @@ class RolesManagementScreen extends StatelessWidget {
     final TextEditingController roleController = TextEditingController();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Manage Roles')),
+      appBar: AppBar(title: Text('manage_roles_title'.tr)),
       body: Obx(() {
         if (controller.isLoading.value) return const Center(child: CircularProgressIndicator());
         return ListView.builder(
@@ -91,8 +91,8 @@ class RolesManagementScreen extends StatelessWidget {
 
   void _showRoleDialog(BuildContext context, RolesManagementController controller, {int? roleId, required TextEditingController roleController}) {
     Get.defaultDialog(
-      title: roleId == null ? 'Add Role' : 'Edit Role',
-      content: TextField(controller: roleController, decoration: const InputDecoration(labelText: 'Role Name')),
+      title: roleId == null ? 'add_role'.tr : 'edit_role'.tr,
+      content: TextField(controller: roleController, decoration: InputDecoration(labelText: 'role_name_label'.tr)),
       confirm: ElevatedButton(
         onPressed: () {
           if (roleId == null) {
@@ -102,7 +102,7 @@ class RolesManagementScreen extends StatelessWidget {
           }
           Get.back();
         },
-        child: const Text('Save'),
+        child: Text('save'.tr),
       ),
     );
   }

@@ -18,8 +18,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
   int _selectedRoleId = 2; // Default: Wareefa
 
   final List<Map<String, dynamic>> _roles = [
-    {'id': 1, 'name': 'Admin / مسئول'},
-    {'id': 2, 'name': 'Wareefa / وريفة'},
+    {'id': 1, 'name': 'role_admin'.tr},
+    {'id': 2, 'name': 'role_wareefa'.tr},
   ];
 
   @override

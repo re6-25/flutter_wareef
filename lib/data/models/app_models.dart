@@ -5,6 +5,7 @@ class UserModel {
   final String salt;
   final int roleId;
   final bool isActive;
+  final String? profileImage;
   final DateTime createdAt;
 
   UserModel({
@@ -14,6 +15,7 @@ class UserModel {
     required this.salt,
     required this.roleId,
     this.isActive = true,
+    this.profileImage,
     required this.createdAt,
   });
 
@@ -25,6 +27,7 @@ class UserModel {
       'salt': salt,
       'role_id': roleId,
       'is_active': isActive ? 1 : 0,
+      'profile_image': profileImage,
       'created_at': createdAt.toIso8601String(),
     };
   }
@@ -37,6 +40,7 @@ class UserModel {
       salt: map['salt'],
       roleId: map['role_id'],
       isActive: map['is_active'] == 1,
+      profileImage: map['profile_image'],
       createdAt: DateTime.parse(map['created_at']),
     );
   }
@@ -146,6 +150,7 @@ class CourseModel {
   final int? id;
   final String title;
   final String description;
+  final double price;
   final String? imagePath;
   final String category;
   final int createdBy;
@@ -155,6 +160,7 @@ class CourseModel {
     this.id,
     required this.title,
     required this.description,
+    this.price = 0.0,
     this.imagePath,
     this.category = 'Other',
     required this.createdBy,
@@ -166,6 +172,7 @@ class CourseModel {
       'id': id,
       'title': title,
       'description': description,
+      'price': price,
       'image_path': imagePath,
       'category': category,
       'created_by': createdBy,
@@ -178,10 +185,75 @@ class CourseModel {
       id: map['id'],
       title: map['title'],
       description: map['description'],
+      price: (map['price'] ?? 0.0).toDouble(),
       imagePath: map['image_path'],
       category: map['category'] ?? 'Other',
       createdBy: map['created_by'],
       createdAt: DateTime.parse(map['created_at']),
+    );
+  }
+}
+
+class OfferModel {
+  final int? id;
+  final int courseId;
+  final double discountPercentage;
+  final String? imagePath;
+  final DateTime createdAt;
+
+  OfferModel({
+    this.id,
+    required this.courseId,
+    required this.discountPercentage,
+    this.imagePath,
+    required this.createdAt,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'course_id': courseId,
+      'discount_percentage': discountPercentage,
+      'image_path': imagePath,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
+
+  factory OfferModel.fromMap(Map<String, dynamic> map) {
+    return OfferModel(
+      id: map['id'],
+      courseId: map['course_id'],
+      discountPercentage: (map['discount_percentage'] ?? 0.0).toDouble(),
+      imagePath: map['image_path'],
+      createdAt: DateTime.parse(map['created_at']),
+    );
+  }
+}
+
+class CategoryModel {
+  final int? id;
+  final String name;
+  final String type; // 'project', 'course', 'both'
+
+  CategoryModel({
+    this.id,
+    required this.name,
+    required this.type,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'type': type,
+    };
+  }
+
+  factory CategoryModel.fromMap(Map<String, dynamic> map) {
+    return CategoryModel(
+      id: map['id'],
+      name: map['name'],
+      type: map['type'],
     );
   }
 }

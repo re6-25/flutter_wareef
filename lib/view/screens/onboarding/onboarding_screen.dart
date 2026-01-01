@@ -15,18 +15,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<Map<String, String>> _pages = [
     {
-      'title': 'مرحباً بكِ في أكاديمية وريف',
-      'body': 'منصة تعليمية تهدف لتمكين المرأة وتطوير مهاراتكن المهنية والتقنية.',
+      'title': 'onboarding_title_1'.tr,
+      'body': 'onboarding_body_1'.tr,
       'image': 'assets/images/logo.png'
     },
     {
-      'title': 'أديري مشاريعكِ الخاصة',
-      'body': 'أضيفي مشاريعكِ، تابعي حالتها، واحصلي على الدعم اللازم من فريقنا المختص.',
+      'title': 'onboarding_title_2'.tr,
+      'body': 'onboarding_body_2'.tr,
       'image': 'assets/images/background.png'
     },
     {
-      'title': 'دورات تدريبية متميزة',
-      'body': 'سجلي في أقوى الدورات التعليمية عبر الواتساب وكوني جزءاً من مجتمعنا.',
+      'title': 'onboarding_title_3'.tr,
+      'body': 'onboarding_body_3'.tr,
       'image': 'assets/images/logo.png'
     },
   ];
@@ -64,7 +64,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children: [
                 TextButton(
                   onPressed: () => Get.offNamed('/login'),
-                  child: const Text('تخطي', style: TextStyle(color: Colors.grey, fontSize: 16)),
+                  child: Text('skip'.tr, style: const TextStyle(color: Colors.grey, fontSize: 16)),
                 ),
                 Row(
                   children: List.generate(_pages.length, (idx) => _buildDot(idx)),

@@ -25,7 +25,13 @@ class ProjectCard extends StatelessWidget {
           if (project.imagePath != null)
             ClipRRect(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-              child: Image.file(File(project.imagePath!), height: 150, fit: BoxFit.cover),
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: Image.file(
+                  File(project.imagePath!),
+                  fit: BoxFit.cover,
+                ),
+              ),
             ),
           Padding(
             padding: const EdgeInsets.all(16),

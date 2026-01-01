@@ -32,6 +32,11 @@ class CourseCard extends StatelessWidget {
                   course.title,
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
+                const SizedBox(height: 4),
+                Text(
+                  course.category,
+                  style: const TextStyle(fontSize: 12, color: AppColors.primary, fontWeight: FontWeight.w600),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   course.description,
@@ -39,6 +44,18 @@ class CourseCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(color: Colors.grey[600]),
                 ),
+                const SizedBox(height: 12),
+                if (course.price > 0)
+                  Row(
+                    children: [
+                      const Icon(Icons.monetization_on, color: AppColors.primary, size: 16),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${course.price} SAR',
+                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primary),
+                      ),
+                    ],
+                  ),
                 const SizedBox(height: 16),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -69,9 +86,15 @@ class CourseCard extends StatelessWidget {
 
   Widget _buildImage() {
     if (course.imagePath != null) {
+      final isAsset = course.imagePath!.startsWith('assets');
       return ClipRRect(
         borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
-        child: Image.file(File(course.imagePath!), height: 150, fit: BoxFit.cover),
+        child: AspectRatio(
+          aspectRatio: 16 / 9,
+          child: isAsset
+              ? Image.asset(course.imagePath!, fit: BoxFit.cover)
+              : Image.file(File(course.imagePath!), fit: BoxFit.cover),
+        ),
       );
     }
     return Container(

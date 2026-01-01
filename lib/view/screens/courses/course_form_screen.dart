@@ -16,6 +16,7 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _priceController = TextEditingController();
   final _controller = Get.find<CoursesController>();
   String? _imagePath;
   CourseModel? _editingCourse;
@@ -29,6 +30,7 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
     if (_editingCourse != null) {
       _titleController.text = _editingCourse!.title;
       _descriptionController.text = _editingCourse!.description;
+      _priceController.text = _editingCourse!.price.toString();
       _imagePath = _editingCourse!.imagePath;
       _selectedCategory = _editingCourse!.category;
     }
@@ -71,21 +73,40 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
                 validator: (v) => v!.isEmpty ? 'required'.tr : null,
               ),
               const SizedBox(height: 16),
+              TextFormField(
+                controller: _priceController,
+                decoration: InputDecoration(
+                  labelText: 'price'.tr,
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  prefixText: 'SAR ',
+                ),
+                keyboardType: TextInputType.number,
+                validator: (v) => v!.isEmpty ? 'required'.tr : null,
+              ),
+              const SizedBox(height: 16),
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
                 decoration: InputDecoration(
-                  labelText: 'التصنيف',
+                  labelText: 'category'.tr,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
                 items: _categories.map((cat) {
-                  return DropdownMenuItem(value: cat, child: Text(cat));
+                  final categoryKeys = {
+                    'All': 'cat_all',
+                    'Arts': 'cat_arts',
+                    'Design': 'cat_design',
+                    'Tech': 'cat_tech',
+                    'Crafts': 'cat_crafts',
+                    'Other': 'cat_other'
+                  };
+                  return DropdownMenuItem(value: cat, child: Text(categoryKeys[cat]?.tr ?? cat));
                 }).toList(),
                 onChanged: (val) {
                   if (val != null) setState(() => _selectedCategory = val);
                 },
               ),
               const SizedBox(height: 20),
-              const Text('صورة الدورة (اختياري)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text('course_image_optional'.tr, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               // ... rest of image picking logic same
               const SizedBox(height: 10),
               GestureDetector(
@@ -119,10 +140,12 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
                 child: ElevatedButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
+                      final price = double.tryParse(_priceController.text) ?? 0.0;
                       if (_editingCourse == null) {
                         await _controller.addCourse(
                           _titleController.text, 
-                          _descriptionController.text, 
+                          _descriptionController.text,
+                          price: price,
                           imagePath: _imagePath,
                           category: _selectedCategory,
                         );
@@ -130,7 +153,8 @@ class _CourseFormScreenState extends State<CourseFormScreen> {
                         await _controller.updateCourse(
                           _editingCourse!.id!, 
                           _titleController.text, 
-                          _descriptionController.text, 
+                          _descriptionController.text,
+                          price: price,
                           imagePath: _imagePath,
                           category: _selectedCategory,
                         );

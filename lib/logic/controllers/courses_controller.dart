@@ -67,63 +67,72 @@ class CoursesController extends GetxController {
     // 1. Drawing Kids
     await addCourse(
       'دورة رسم الأطفال ✨',
-      'تنمي موهبة طفلك بسعر 2800 ريال. سجليه الآن الرابط 👇 \n$waLink',
+      'تنمي موهبة طفلك. سجليه الآن الرابط 👇 \n$waLink',
+      price: 2800.0,
       category: 'Arts',
       imagePath: 'assets/images/drawing_kids.png'
     );
     // 2. Wedding Invitations
     await addCourse(
       'تصميم دعوات الزفاف الورقية 💍',
-      'أسرار التصميم باحترافية من جوالك. السعر 2800 ريال. للتسجيل 👇 \n$waLink',
+      'أسرار التصميم باحترافية من جوالك. للتسجيل 👇 \n$waLink',
+      price: 2800.0,
       category: 'Design',
-      imagePath: 'assets/images/wedding_invitations.jpg'
+      imagePath: 'assets/images/wedding_invitations.png'
     );
     // 3. Content Writing
     await addCourse(
       'دورة كتابة المحتوى ✍️',
-      'تكتبي بثقة وتحولي موهبتك لمصدر دخل. السعر: 2800 ريال. الرابط 👇 \n$waLink',
+      'تكتبي بثقة وتحولي موهبتك لمصدر دخل. الرابط 👇 \n$waLink',
+      price: 2800.0,
       category: 'Tech',
       imagePath: 'assets/images/content_writing.png'
     );
     // 4. Polymer Clay
     await addCourse(
       'دورة الصلصال الحراري 🏺',
-      'تحوّل موهبتك لقطع فنية مميزة. السعر 2800 ريال. للتسجيل 👇 \n$waLink',
+      'تحوّل موهبتك لقطع فنية مميزة. للتسجيل 👇 \n$waLink',
+      price: 2800.0,
       category: 'Crafts',
-      imagePath: 'assets/images/polymer_clay.jpg'
+      imagePath: 'assets/images/polymer_clay.png'
     );
     // 5. Resin Art
     await addCourse(
       'دورة فن الريزن 💎',
-      'اصنعي قطع فخمة تُباع وتُطلب. السعر: 2800 ريال. سجل الآن 👇 \n$waLink',
+      'اصنعي قطع فخمة تُباع وتُطلب. سجل الآن 👇 \n$waLink',
+      price: 2800.0,
       category: 'Crafts',
-      imagePath: 'assets/images/resin_art.jpg'
+      imagePath: 'assets/images/resin_art.png'
     );
-    // 6. Cameo (New)
+    // 6. Cameo
     await addCourse(
       'دورة الكاميو – القص الإلكتروني ✂️',
-      'تعلمي استخدام الجهاز وقص الملصقات باحتراف. بسعر 50 ر.ص بدل 100 🤩 الرابط 👇 \n$waLink',
+      'تعلمي استخدام الجهاز وقص الملصقات باحتراف. الرابط 👇 \n$waLink',
+      price: 50.0,
       category: 'Crafts',
       imagePath: 'assets/images/cameo_course.png'
     );
-    // 7. Photoshop (New)
+    // 7. Photoshop
     await addCourse(
       'دورة الفوتوشوب المكثفة 💻',
-      'تعديل الصور وتصميم البوستات الجذابة. بسعر 50 ر.ص بدل 70 ر.ص للتسجيل 👇 \n$waLink',
+      'تعديل الصور وتصميم البوستات الجذابة. للتسجيل 👇 \n$waLink',
+      price: 50.0,
       category: 'Tech',
-      imagePath: 'assets/images/photoshop_course.jpg'
+      imagePath: 'assets/images/photoshop_course.png'
     );
-    // 8. Digital Invitations (New)
+    // 8. Digital Invitations
     await addCourse(
       'دورة الدعوات الإلكترونية ✨',
-      'تصميم دعوات أنيقة بلمسات بسيطة. السعر 50 ر.ص فقط. سجل الآن 👇 \n$waLink',
+      'تصميم دعوات أنيقة بلمسات بسيطة. سجل الآن 👇 \n$waLink',
+      price: 50.0,
       category: 'Design',
       imagePath: 'assets/images/digital_invitations.png'
     );
-    // 9. Knitting/Crochet (New)
+    // 9. Knitting/Crochet
     await addCourse(
       'دورة الحياكة (الكروشيه) 🧶',
-      'متعة وراحة وتحويل الخيوط لقطع فنية. عرض خاص بـ 20 ر.ص فقط. للتسجيل 👇 \n$waLink',
+      'متعة وراحة وتحويل الخيوط لقطع فنية. للتسجيل 👇 \n$waLink',
+      price: 20.0,
       category: 'Crafts',
       imagePath: 'assets/images/crochet_course.png'
     );
@@ -131,11 +140,12 @@ class CoursesController extends GetxController {
     fetchCourses();
   }
 
-  Future<void> addCourse(String title, String description, {String? imagePath, String category = 'Other'}) async {
+  Future<void> addCourse(String title, String description, {double price = 0.0, String? imagePath, String category = 'Other'}) async {
     final userId = _authController.currentUser.value?.id ?? 1;
     final course = CourseModel(
       title: title,
       description: description,
+      price: price,
       imagePath: imagePath,
       category: category,
       createdBy: userId,
@@ -145,14 +155,16 @@ class CoursesController extends GetxController {
     await db.insert('courses', course.toMap());
   }
 
-  Future<void> updateCourse(int id, String title, String description, {String? imagePath, String? category}) async {
+  Future<void> updateCourse(int id, String title, String description, {double? price, String? imagePath, String? category}) async {
     final db = await _dbHelper.database;
     final Map<String, dynamic> values = {
       'title': title,
       'description': description,
-      'image_path': imagePath,
     };
+    if (price != null) values['price'] = price;
+    if (imagePath != null) values['image_path'] = imagePath;
     if (category != null) values['category'] = category;
+    
     await db.update('courses', values, where: 'id = ?', whereArgs: [id]);
     fetchCourses();
   }

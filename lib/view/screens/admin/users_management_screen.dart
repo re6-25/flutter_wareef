@@ -53,7 +53,7 @@ class UsersManagementScreen extends StatelessWidget {
     final controller = Get.put(UsersManagementController());
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Users Management')),
+      appBar: AppBar(title: Text('users_management_title'.tr)),
       body: Obx(() {
         if (controller.isLoading.value) return const Center(child: CircularProgressIndicator());
         return ListView.builder(
@@ -64,7 +64,7 @@ class UsersManagementScreen extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: ListTile(
                 title: Text(user.username),
-                subtitle: Text('Role: ${_getRoleName(user.roleId, controller.roles)}'),
+                subtitle: Text('${'role_label'.tr}${_getRoleName(user.roleId, controller.roles)}'),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -87,13 +87,13 @@ class UsersManagementScreen extends StatelessWidget {
   }
 
   String _getRoleName(int roleId, List roles) {
-    final role = roles.firstWhere((element) => element['id'] == roleId, orElse: () => {'name': 'Unknown'});
+    final role = roles.firstWhere((element) => element['id'] == roleId, orElse: () => {'name': 'unknown'.tr});
     return role['name'];
   }
 
   void _showRoleDialog(BuildContext context, UserModel user, UsersManagementController controller) {
     Get.defaultDialog(
-      title: 'Update Role',
+      title: 'update_role_title'.tr,
       content: Column(
         children: controller.roles.map((role) => ListTile(
           title: Text(role['name']),

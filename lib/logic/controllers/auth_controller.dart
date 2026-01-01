@@ -151,6 +151,35 @@ class AuthController extends GetxController {
     Get.offAllNamed('/login');
   }
 
+  Future<void> updateProfileImage(String path) async {
+    if (currentUser.value == null) return;
+    try {
+      final db = await _dbHelper.database;
+      await db.update(
+        'users',
+        {'profile_image': path},
+        where: 'id = ?',
+        whereArgs: [currentUser.value!.id],
+      );
+      
+      // Update local state
+      final updatedUser = UserModel(
+        id: currentUser.value!.id,
+        username: currentUser.value!.username,
+        passwordHash: currentUser.value!.passwordHash,
+        salt: currentUser.value!.salt,
+        roleId: currentUser.value!.roleId,
+        isActive: currentUser.value!.isActive,
+        profileImage: path,
+        createdAt: currentUser.value!.createdAt,
+      );
+      currentUser.value = updatedUser;
+      Get.snackbar('success'.tr, 'profile_image_updated'.tr);
+    } catch (e) {
+      Get.snackbar('error'.tr, 'Failed to update profile image: $e');
+    }
+  }
+
   bool get isAdmin => currentUser.value?.roleId == 1;
   bool get isWareefa => currentUser.value?.roleId == 2;
   bool get isGuest => currentUser.value == null || currentUser.value?.roleId == 3;

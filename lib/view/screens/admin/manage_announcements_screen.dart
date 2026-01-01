@@ -37,14 +37,14 @@ class _ManageAnnouncementsScreenState extends State<ManageAnnouncementsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('إدارة الإعلانات')),
+      appBar: AppBar(title: Text('manage_announcements_title'.tr)),
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddDialog,
         child: const Icon(Icons.add),
       ),
       body: Obx(() {
         if (_controller.isLoading.value) return const Center(child: CircularProgressIndicator());
-        if (_controller.announcements.isEmpty) return const Center(child: Text('لا توجد إعلانات حالياً'));
+        if (_controller.announcements.isEmpty) return Center(child: Text('no_announcements_currently'.tr));
 
         return ListView.builder(
           itemCount: _controller.announcements.length,
@@ -79,11 +79,11 @@ class _ManageAnnouncementsScreenState extends State<ManageAnnouncementsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('إضافة إعلان جديد', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text('add_new_announcement'.tr, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
-              TextField(controller: _titleController, decoration: const InputDecoration(labelText: 'العنوان')),
+              TextField(controller: _titleController, decoration: InputDecoration(labelText: 'announcement_title'.tr)),
               const SizedBox(height: 10),
-              TextField(controller: _contentController, decoration: const InputDecoration(labelText: 'المحتوى'), maxLines: 3),
+              TextField(controller: _contentController, decoration: InputDecoration(labelText: 'announcement_content'.tr), maxLines: 3),
               const SizedBox(height: 20),
               GestureDetector(
                 onTap: _pickImage,
@@ -98,7 +98,7 @@ class _ManageAnnouncementsScreenState extends State<ManageAnnouncementsScreen> {
               ElevatedButton(
                 onPressed: _addAnnouncement,
                 style: ElevatedButton.styleFrom(minimumSize: const Size(double.infinity, 50)),
-                child: const Text('إرسال الإعلان'),
+                child: Text('send_announcement'.tr),
               ),
             ],
           ),

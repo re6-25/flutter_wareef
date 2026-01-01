@@ -81,10 +81,21 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
               DropdownButtonFormField<String>(
                 value: _selectedCategory,
                 decoration: InputDecoration(
-                  labelText: 'تصنيف المشروع',
+                  labelText: 'project_category_label'.tr,
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                items: _categories.map((c) => DropdownMenuItem(value: c, child: Text(c))).toList(),
+                items: _categories.map((c) {
+                  final Map<String, String> categoryKeys = {
+                    'الكل': 'cat_all',
+                    'تقني': 'cat_tech',
+                    'فني': 'cat_arts',
+                    'تجاري': 'cat_commercial',
+                    'حرفي': 'cat_crafts',
+                    'تعليمي': 'cat_educational',
+                    'أخرى': 'cat_other'
+                  };
+                  return DropdownMenuItem(value: c, child: Text(categoryKeys[c]?.tr ?? c));
+                }).toList(),
                 onChanged: (v) => setState(() => _selectedCategory = v!),
               ),
               const SizedBox(height: 16),
@@ -92,7 +103,7 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
                 controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 decoration: InputDecoration(
-                  labelText: 'رقم هاتف المصورة (واتساب)',
+                  labelText: 'photographer_phone'.tr,
                   prefixIcon: const Icon(Icons.phone_android),
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
@@ -109,7 +120,7 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
                 validator: (v) => v!.isEmpty ? 'required'.tr : null,
               ),
               const SizedBox(height: 20),
-              const Text('صورة الغلاف (اختياري)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text('cover_image_optional'.tr, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               GestureDetector(
                 onTap: _pickImage,
@@ -136,7 +147,7 @@ class _ProjectFormScreenState extends State<ProjectFormScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text('معرض أعمالك (صور سابقة)', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text('your_works_gallery'.tr, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               const SizedBox(height: 10),
               SizedBox(
                 height: 100,
